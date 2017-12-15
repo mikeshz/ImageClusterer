@@ -6,8 +6,15 @@ import Gallery from 'react-grid-gallery';
 function Recluster(props) {
     return (
         <button onClick={props.onClick}>
-            {props.value}
             Recluster Images
+        </button>
+    );
+}
+
+function Movement(props) {
+    return (
+        <button onClick={props.onClick}>
+            {props.value}
         </button>
     );
 }
@@ -41,26 +48,42 @@ class ImageClusterer extends React.Component {
             })
     }
 
-    renderReclusterBtn(selectedImages) {
+    renderReclusterBtn() {
         return (
             <Recluster
-                onClick={() => this.handleClick(this.getSelectedImages().toString())}
+                onClick={() => this.handleClick("recluster")}
             />
         );
     }
 
-    handleClick(selectedImages) {
-        console.log("selected: " + this.getSelectedImages().toString());
+    renderMovementBtn(moveType) {
+        return (
+            <Movement
+                value={moveType}
+                onClick={() => this.handleClick(moveType)}
+            />
+        );
+    }
 
-        fetch('//localhost:3001/api/recluster', {
+    handleClick(buttonClicked) {
+        console.log(buttonClicked);
+        var apiRoute = '//localhost:3001/api/';
+        var requestDict;
+        if (buttonClicked === "recluster") {
+            console.log("selected: " + this.getSelectedImages().toString());
+            apiRoute += "recluster";
+            requestDict = {selectedImages: this.getSelectedImages().toString()}
+        } else {
+            apiRoute += "moveview";
+            requestDict = {movement: buttonClicked}
+        }
+        fetch(apiRoute, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                selectedImages: this.getSelectedImages().toString()
-            })
+            body: JSON.stringify(requestDict)
         }).then(results => {
             return results.json();
         }).then(data => {
@@ -126,7 +149,15 @@ class ImageClusterer extends React.Component {
                     color: "#666"
                 }}>Selected images: {this.getSelectedImages().toString()}</div>
             <div>
-                {this.renderReclusterBtn(this.getSelectedImages().toString())}
+                {this.renderReclusterBtn()}
+            </div>
+            <div>
+                {this.renderMovementBtn("Left")}
+                {this.renderMovementBtn("Right")}
+                {this.renderMovementBtn("Up")}
+                {this.renderMovementBtn("Down")}
+                {this.renderMovementBtn("In")}
+                {this.renderMovementBtn("Out")}
             </div>
             <div style={{
                 display: "block",

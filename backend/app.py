@@ -29,9 +29,23 @@ def serve_images():
         }
         ]}), 200
 
-@app.route('/api/moveview')
+@app.route('/api/moveview', methods=['POST'])
 def serve_move_view():
-    pass
+    print("Movement: " + request.json['movement'])
+    return jsonify({"images": [
+        {
+            "src": encoded_string2,
+            "thumbnail": encoded_string2
+        },
+        {
+            "src": encoded_string2,
+            "thumbnail": encoded_string2
+        },
+        {
+            "src": encoded_string2,
+            "thumbnail": encoded_string2
+        }
+        ]}), 200
 
 @app.route('/api/recluster', methods=['POST'])
 def serve_recluster():
